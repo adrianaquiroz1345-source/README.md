@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lotería de Profesiones</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .no-print {
+    padding: 20px;
+    text-align: center;
+    background: #2c3e50;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  button {
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .page {
+    width: 21cm;
+    height: 29.7cm; /* Tamaño fijo para forzar el salto perfecto */
+    padding: 1.5cm;
+    margin: 0 auto 1cm auto;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra las 2 tablas en la página */
+  }
+  
+  /* ESTILOS TABLA 3x3 (9 CASILLAS) */
+  .tabla {
+    border: 5px solid #2980b9;
+    padding: 15px;
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+    grid-gap: 12px;
+    background: #ecf0f1;
+    margin-bottom: 1.5cm; /* Separador entre 2 tablas */
+  }
+  .tabla:last-child {
+    margin-bottom: 0;
+  }
+  .tabla-header {
+    grid-column: span 3; /* Cabecera ocupa las 3 columnas */
+    text-align: center;
+    font-size: 26px;
+    font-weight: 900;
+    color: #c0392b;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .box {
+    border: 4px solid #34495e;
+    background: #ffffff;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 140px; /* Cajas un poco más altas */
+    text-align: center;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  .emoji {
+    font-size: 70px; /* Dibujo un poco más grande */
+    margin-bottom: 8px;
+  }
+  .name {
+    font-size: 16px; 
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #2c3e50;
+  }
+  
+  /* BARAJA (CARTAS PARA GRITAR) */
+  .calling-cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
+    width: 100%;
+  }
+  .calling-card {
+    border: 3px dashed #7f8c8d;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 160px;
+    box-sizing: border-box;
+  }
+
+  @media print {
+    body {
+      background: none;
+      margin: 0;
+    }
+    .no-print {
+      display: none !important;
+    }
+    .page {
+      margin: 0;
+      box-shadow: none;
+      width: 21cm;
+      height: 29.7cm;
+      page-break-after: always;
+      padding: 1cm;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <h1>Lotería de Profesiones (Tablas de 9 Cartas)</h1>
+  <button onclick="window.print()">🖨️ Imprimir Lotería</button>
+</div>
+
+<div class="container" id="printable-area"></div>
+
+<script>
+  const profesiones = [
+    { name: "El Maestro", emoji: "👨‍🏫" },
+    { name: "La Doctora", emoji: "👩‍⚕️" },
+    { name: "El Agricultor", emoji: "🧑‍🌾" },
+    { name: "El Carpintero", emoji: "🪚" },
+    { name: "El Bombero", emoji: "👨‍🚒" },
+    { name: "La Policía", emoji: "👮‍♀️" },
+    { name: "El Enfermero", emoji: "👨‍⚕️" },
+    { name: "La Veterinaria", emoji: "🐕‍🦺" },
+    { name: "El Panadero", emoji: "🥖" },
+    { name: "La Mecánica", emoji: "🔧" },
+    { name: "El Albañil", emoji: "🧱" },
+    { name: "El Cocinero", emoji: "🍳" },
+    { name: "La Científica", emoji: "🔬" },
+    { name: "El Músico", emoji: "🎸" },
+    { name: "La Ganadera", emoji: "🐄" },
+    { name: "El Apicultor", emoji: "🐝" },
+    { name: "El Electricista", emoji: "⚡" },
+    { name: "La Costurera", emoji: "🧵" },
+    { name: "El Pescador", emoji: "🎣" },
+    { name: "La Pintora", emoji: "🎨" },
+    { name: "El Herrero", emoji: "⚒️" },
+    { name: "La Cartera", emoji: "✉️" },
+    { name: "El Dentista", emoji: "🦷" },
+    { name: "El Leñador", emoji: "🪓" }
+  ];
+
+  function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  }
+
+  function renderBox(prof) {
+    return `
+      <div class="box">
+        <div class="emoji">${prof.emoji}</div>
+        <div class="name">${prof.name}</div>
+      </div>
+    `;
+  }
+
+  function renderTabla(id) {
+    // Escogemos 9 profesiones al azar para esta tabla de jugador
+    let selected = shuffle([...profesiones]).slice(0, 9);
+    let boxes = selected.map(renderBox).join('');
+    return `
+      <div class="tabla">
+        <div class="tabla-header">Lotería de Profesiones • Carta ${id}</div>
+        ${boxes}
+      </div>
+    `;
+  }
+
+  const container = document.getElementById('printable-area');
+  let pagesHtml = '';
+
+  // 1) 8 TABLAS PARA JUGADORES (2 por página)
+  for (let i = 0; i < 4; i++) {
+    pagesHtml += `
+      <div class="page">
+        ${renderTabla(i * 2 + 1)}
+        ${renderTabla(i * 2 + 2)}
+      </div>
+    `;
+  }
+
+  // 2) BARAJA DE 24 CARTAS PARA GRITAR (12 por página)
+  for (let p = 0; p < 2; p++) {
+    let cards = profesiones.slice(p * 12, p * 12 + 12);
+    let cardsHtml = cards.map(prof => `
+      <div class="calling-card">
+        <div class="emoji" style="font-size: 75px;">${prof.emoji}</div>
+        <div class="name" style="font-size: 18px; margin-top: 5px;">${prof.name}</div>
+      </div>
+    `).join('');
+
+    pagesHtml += `
+      <div class="page">
+        <div class="tabla-header" style="color: #27ae60; font-size: 28px;">Cartas para Gritar (${p+1}/2)</div>
+        <div class="calling-cards-container">
+          ${cardsHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = pagesHtml;
+</script>
+</body>
+</html>
